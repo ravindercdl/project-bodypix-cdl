@@ -161,8 +161,8 @@ SVG_STYLES     = '''
         .text_bg {{ fill: black; }}
         .text_fg {{ fill: white; }}
         .bbox {{ stroke: white; stroke-width: 2; fill: none;}}
-        .kpcirc {{ fill: cyan; stroke: blue; }}
-        .kpline {{ stroke: blue; stroke-width: 2; }}
+        .kpcirc {{ fill: cyan; stroke: yellow; }}
+        .kpline {{ stroke: yellow; stroke-width: 5; }}
         .whiteline {{ stroke: white; stroke-width: 2; }}
     </style>
     '''
@@ -215,10 +215,10 @@ class Callback:
 
     def reset_display_toggles(self):
         self.skeletons = True
-        self.bboxes = True
-        self.anon = False
-        self.hm = True
-        self.bodyparts = True
+        self.bboxes = False
+        self.anon = True
+        self.hm = False
+        self.bodyparts = False
 
     def gc_loop(self):
         while self.running:
@@ -609,8 +609,7 @@ class Callback:
         with self.trash_lock:
             self.trash_buffer(vid_buf)
             vid_buf = None
-        text = 'Inference: {:.2f} ms  Total frame time: {:.2f} ms ({:.2f} FPS) Current occupancy: {:d}'.format(
-                    inf_time, frame_time, 1000 / frame_time, len(poses))
+        text = 'Compass Digital Vision AI model - Inference: {:.2f} FPS Current occupancy: {:d}'.format(1000 / frame_time, len(poses))
         if self.print_stats and (self.frames % 100) == 0: print(text)
 
         # Generate SVG overlay.
