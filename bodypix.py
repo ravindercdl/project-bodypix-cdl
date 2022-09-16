@@ -85,9 +85,9 @@ class Callback:
 
     if self.anonymize:
       if self.background_image is None:
-      self.background_image = image
-    else:
-      self.background_image = image
+         self.background_image = image
+      else:
+         self.background_image = image
 
     output_image = self.background_image
     int_img = output_image
