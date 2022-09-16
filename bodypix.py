@@ -39,7 +39,7 @@ def shadow_text(dwg, x, y, text, font_size=16):
     dwg.add(dwg.text(text, insert=(x, y), fill='white',
                      font_size=font_size, style='font-family:sans-serif'))
 
-def draw_pose(dwg, pose, color='blue', threshold=0.2):
+def draw_pose(dwg, pose, color='yellow', threshold=0.2):
     xys = {}
     for label, keypoint in pose.keypoints.items():
         if keypoint.score < threshold: continue
@@ -134,8 +134,8 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--mirror', help='flip video horizontally', action='store_true')
     parser.add_argument('--model', help='.tflite model path.', required=False)
-    parser.add_argument('--width', help='Source width', default='1920')
-    parser.add_argument('--height', help='Source height', default='1080')
+    parser.add_argument('--width', help='Source width', default='640')
+    parser.add_argument('--height', help='Source height', default='480')
     parser.add_argument('--videosrc', help='Which video source to use', default='/dev/video0')
 
     parser.add_argument('--anonymize', dest='anonymize', action='store_true', help='Use anonymizer mode [--noanonymize]')
