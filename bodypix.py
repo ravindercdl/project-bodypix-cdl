@@ -107,7 +107,7 @@ class Callback:
     else:
       self.background_image = image
 
-    output_image = self.background_image + rgb_heatmap
+    output_image = self.background_image
     int_img = np.uint8(np.clip(output_image,0,255))
 
     end_time = time.monotonic()
@@ -134,8 +134,8 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--mirror', help='flip video horizontally', action='store_true')
     parser.add_argument('--model', help='.tflite model path.', required=False)
-    parser.add_argument('--width', help='Source width', default='640')
-    parser.add_argument('--height', help='Source height', default='480')
+    parser.add_argument('--width', help='Source width', default='1920')
+    parser.add_argument('--height', help='Source height', default='1080')
     parser.add_argument('--videosrc', help='Which video source to use', default='/dev/video0')
 
     parser.add_argument('--anonymize', dest='anonymize', action='store_true', help='Use anonymizer mode [--noanonymize]')
