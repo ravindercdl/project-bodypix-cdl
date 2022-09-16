@@ -28,12 +28,6 @@ from PIL import Image
 import gstreamer
 from pose_engine import PoseEngine, EDGES, BODYPIX_PARTS
 
-#Importing image from internet for background
-import os
-#link to 640 by 480 jpg image
-os.system('wget https://i.postimg.cc/RCcdsckN/burger-station.jpg -O /tmp/cafe.jpg')
-pil_image = Image.open('/tmp/cafe.jpg').convert('RGB')
-
 # Color mapping for bodyparts
 RED_BODYPARTS = [k for k,v in BODYPIX_PARTS.items() if "right" in v]
 GREEN_BODYPARTS = [k for k,v in BODYPIX_PARTS.items() if "hand" in v or "torso" in v]
@@ -63,10 +57,7 @@ class Callback:
     self.engine = engine
     self.anonymize = anonymize
     self.bodyparts = bodyparts
-    if self.bodyparts:
-        self.background_image = pil_image
-    else:
-        self.background_image = None
+    self.background_image = None
     self.last_time = time.monotonic()
     self.frames = 0
     self.sum_fps = 0
@@ -82,15 +73,42 @@ class Callback:
       b = 1.0 / (v1 - v0);
       return np.clip(a + b * heatmap, 0.0, 1.0);
 
+    # clip heatmap to create a mask
+    heatmap = clip_heatmap(heatmap,  -1.0,  1.0)
+
+    if self.bodyparts:
+      rgb_heatmap = np.dstack([
+            heatmap*(np.sum(bodyparts[:,:,RED_BODYPARTS], axis=2)-0.5)*100,
+            heatmap*(np.sum(bodyparts[:,:,GREEN_BODYPARTS], axis=2)-0.5)*100,
+            heatmap*(np.sum(bodyparts[:,:,BLUE_BODYPARTS], axis=2)-0.5)*100,
+          ])
+    else:
+      rgb_heatmap = np.dstack([heatmap[:,:]*100]*3)
+      rgb_heatmap[:,:,1:] = 0 # make it red
+
+    rgb_heatmap= 155*np.clip(rgb_heatmap, 0, 1)
+    rescale_factor = [
+      image.shape[0]/heatmap.shape[0],
+      image.shape[1]/heatmap.shape[1],
+      1]
+
+    rgb_heatmap = scipy.ndimage.zoom(rgb_heatmap, rescale_factor, order=0)
 
     if self.anonymize:
       if self.background_image is None:
-         self.background_image = image
-      else:
-         self.background_image = image
+        self.background_image = np.float32(np.zeros_like(image))
+      # Estimate instantaneous background
+      mask = np.clip(np.sum(rgb_heatmap, axis=2), 0, 1)[:,:,np.newaxis]
+      background_estimate = (self.background_image*mask+ image*(1.0-mask))
 
-    output_image = self.background_image
-    int_img = output_image
+      # Mix into continuous estimate with decay
+      ratio = 1/max(1,self.frames/2.0)
+      self.background_image = self.background_image*(1.0-ratio) + ratio*background_estimate
+    else:
+      self.background_image = image
+
+    output_image = self.background_image + rgb_heatmap
+    int_img = np.uint8(np.clip(output_image,0,255))
 
     end_time = time.monotonic()
 
@@ -116,16 +134,16 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--mirror', help='flip video horizontally', action='store_true')
     parser.add_argument('--model', help='.tflite model path.', required=False)
-    parser.add_argument('--width', help='Source width', default='1920')
-    parser.add_argument('--height', help='Source height', default='1080')
+    parser.add_argument('--width', help='Source width', default='640')
+    parser.add_argument('--height', help='Source height', default='480')
     parser.add_argument('--videosrc', help='Which video source to use', default='/dev/video0')
 
-    parser.add_argument('--preload', dest='anonymize', action='store_true', help='Use anonymizer mode [--noanonymize]')
+    parser.add_argument('--anonymize', dest='anonymize', action='store_true', help='Use anonymizer mode [--noanonymize]')
     parser.add_argument('--noanonymize', dest='anonymize', action='store_false', help=argparse.SUPPRESS)
     parser.set_defaults(anonymize=False)
 
     parser.add_argument('--bodyparts', dest='bodyparts', action='store_true', help='Color by bodyparts [--nobodyparts]')
-    parser.add_argument('--reset', dest='bodyparts', action='store_false', help=argparse.SUPPRESS)
+    parser.add_argument('--nobodyparts', dest='bodyparts', action='store_false', help=argparse.SUPPRESS)
     parser.set_defaults(bodyparts=True)
 
     parser.add_argument('--h264', help='Use video/x-h264 input', action='store_true')
@@ -160,6 +178,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# Use the background : python3 bodypix.py --preload 
-# Use the initial frame: python3 bodypix.py --preload --reset
