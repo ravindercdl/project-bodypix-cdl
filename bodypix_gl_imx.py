@@ -457,7 +457,7 @@ class Callback:
 
         svg = io.StringIO()
         svg.write(SVG_HEADER.format(w=self.vinfo.width , h=self.vinfo.height))
-        svg.write(SVG_STYLES.format(counter_size=int(5 * self.vinfo.height / 100)))
+        svg.write(SVG_STYLES.format(counter_size=int(4 * self.vinfo.height / 100)))
 
         pose_count = 0
         # Iterate over poses and keypoints just once.
