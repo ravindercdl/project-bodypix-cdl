@@ -609,7 +609,7 @@ class Callback:
         with self.trash_lock:
             self.trash_buffer(vid_buf)
             vid_buf = None
-        text = 'Compass Digital - Connected Cafe: {:.2f} FPS,  Current occupancy: {:d}'.format(1000 / frame_time, len(poses))
+        text = 'Compass Digital - Connected Cafe: {:.2f} FPS,  Time: {:d}, Current occupancy: {:d}'.format(1000 / frame_time, now_time, len(poses))
         if self.print_stats and (self.frames % 100) == 0: print(text)
 
         # Generate SVG overlay.
