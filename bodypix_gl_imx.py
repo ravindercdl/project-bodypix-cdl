@@ -502,7 +502,7 @@ class Callback:
                 if self.skeletons:
                     svg.write(SVG_KP_LINE.format(x1=ax, y1=ay, x2=bx, y2=by))
 
-        svg.write(SVG_TEXT.format(x=20, y='1em', clazz='counter', text=text))
+        svg.write(SVG_TEXT.format(x=30, y='1em', clazz='counter', text=text))
 
         svg.write(SVG_FOOTER)
         return svg.getvalue()
