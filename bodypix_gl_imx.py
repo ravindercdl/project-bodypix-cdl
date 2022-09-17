@@ -457,7 +457,7 @@ class Callback:
 
         svg = io.StringIO()
         svg.write(SVG_HEADER.format(w=self.vinfo.width , h=self.vinfo.height))
-        svg.write(SVG_STYLES.format(counter_size=int(3 * self.vinfo.height / 100)))
+        svg.write(SVG_STYLES.format(counter_size=int(5 * self.vinfo.height / 100)))
 
         pose_count = 0
         # Iterate over poses and keypoints just once.
@@ -502,7 +502,7 @@ class Callback:
                 if self.skeletons:
                     svg.write(SVG_KP_LINE.format(x1=ax, y1=ay, x2=bx, y2=by))
 
-        svg.write(SVG_TEXT.format(x=0, y='1em', clazz='counter', text=text))
+        svg.write(SVG_TEXT.format(x=20, y='1em', clazz='counter', text=text))
 
         svg.write(SVG_FOOTER)
         return svg.getvalue()
@@ -609,7 +609,7 @@ class Callback:
         with self.trash_lock:
             self.trash_buffer(vid_buf)
             vid_buf = None
-        text = 'Compass Digital Vision AI model - Inference: {:.2f} FPS Current occupancy: {:d}'.format(1000 / frame_time, len(poses))
+        text = 'Compass Digital : Connected Cafe Vision AI - {:.2f} FPS Current occupancy: {:d}'.format(1000 / frame_time, len(poses))
         if self.print_stats and (self.frames % 100) == 0: print(text)
 
         # Generate SVG overlay.
