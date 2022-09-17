@@ -36,7 +36,7 @@ BLUE_BODYPARTS = [k for k,v in BODYPIX_PARTS.items() if "leg" in v or "arm" in v
 def shadow_text(dwg, x, y, text, font_size=16):
     dwg.add(dwg.text(text, insert=(x + 1, y + 1), fill='black',
                      font_size=font_size, style='font-family:sans-serif'))
-    dwg.add(dwg.text(text, insert=(x, y), fill='white',
+    dwg.add(dwg.text(text, insert=(x, y), fill='yellow',
                      font_size=font_size, style='font-family:sans-serif'))
 
 def draw_pose(dwg, pose, color='yellow', threshold=0.2):
@@ -117,9 +117,7 @@ class Callback:
     self.sum_process_time += 1000 * (end_time - start_time) - inference_time
     self.sum_inference_time += inference_time
     self.last_time = end_time
-    text_line = 'PoseNet: %.1fms Frame IO: %.2fms TrueFPS: %.2f Nposes %d' % (
-        self.sum_inference_time / self.frames,
-        self.sum_process_time / self.frames,
+    text_line = 'Compass Digital - Connected Cafe : %.2f FPS Current,  Occupenacy: %d' % (
         self.sum_fps / self.frames,
         len(poses)
     )
