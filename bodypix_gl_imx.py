@@ -159,7 +159,7 @@ SVG_STYLES     = '''
     <style>
         .counter {{ font-size: {counter_size}px; font-family: sans-serif; }}
         .text_bg {{ fill: black; }}
-        .text_fg {{ fill: white; }}
+        .text_fg {{ fill: yellow; }}
         .bbox {{ stroke: white; stroke-width: 2; fill: none;}}
         .kpcirc {{ fill: cyan; stroke: yellow; }}
         .kpline {{ stroke: yellow; stroke-width: 5; }}
