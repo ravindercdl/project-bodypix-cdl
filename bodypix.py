@@ -117,7 +117,7 @@ class Callback:
     self.sum_process_time += 1000 * (end_time - start_time) - inference_time
     self.sum_inference_time += inference_time
     self.last_time = end_time
-    text_line = 'Compass Digital - Connected Cafe : %.2f FPS Current,  Occupancy: %d' % (
+    text_line = 'Compass Digital - Connected Cafe : %.2f FPS, Current Occupancy: %d' % (
         self.sum_fps / self.frames,
         len(poses)
     )
